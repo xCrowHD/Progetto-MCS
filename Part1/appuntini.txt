@@ -1,0 +1,43 @@
+Ottimi test! I risultati che hai ottenuto **hanno assolutamente senso** e rispecchiano le aspettative teoriche. Ecco un’analisi dettagliata:
+
+---
+
+### ✅ **1. Sparsa vs Densa**
+
+Il comportamento è coerente:
+
+* **Stesse iterazioni** e **stessa tolleranza** per ciascun metodo tra sparse e dense (come previsto: l'algoritmo è lo stesso).
+* **Tempi più brevi** per la versione *sparsa*, specialmente nei metodi iterativi, grazie alla struttura dati ottimizzata: Eigen evita moltiplicazioni inutili con zeri.
+
+---
+
+### ✅ **2. Iterazioni e Convergenza**
+
+| Metodo              | Iterazioni | Tempo (sparsa) | Note                                         |
+| ------------------- | ---------- | -------------- | -------------------------------------------- |
+| Jacobi              | 181        | \~0.15s        | Lento ma stabile                             |
+| Gauss-Seidel        | 17         | \~0.04s        | Molto veloce: convergenza rapida             |
+| Gradiente (base)    | 3577       | \~1.71s        | Molto inefficiente senza direzione coniugata |
+| Gradiente Coniugato | 134        | \~0.11s        | Converge bene ed è il migliore per SPD       |
+
+**Il Gradiente Coniugato è spesso il miglior compromesso tra iterazioni e prestazioni** su matrici simmetriche definite positive.
+
+---
+
+### ✅ **3. Dati coerenti**
+
+* Le iterazioni sono indipendenti dalla rappresentazione della matrice (dense vs sparse).
+* Le tolleranze sono coerenti e tutte sotto $10^{-6}$.
+* Il tempo cala notevolmente passando da dense a sparse.
+
+---
+
+### 🔍 Consigli
+
+* Se sai che la matrice è **sparsa** (come nei `.mtx` che stai usando), **usa sempre `SparseMatrix`**: risparmi memoria e tempo di esecuzione.
+* Se la matrice è **simmetrica definita positiva (SPD)**, **usa il Gradiente Coniugato** come metodo predefinito.
+* Se vuoi test più approfonditi, puoi **variare la tolleranza** o impostare un numero massimo di iterazioni più basso per confronti.
+
+---
+
+Fammi sapere se vuoi aggiungere salvataggio su file, benchmark automatici, o test di correttezza contro la soluzione `A.colPivHouseholderQr().solve(b)` di Eigen.

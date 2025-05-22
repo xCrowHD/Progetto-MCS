@@ -1,0 +1,74 @@
+Grazie per avermi fornito gli appunti del professore. Ora ti trascrivo le **formule** esatte secondo il suo metodo e ti fornisco una **implementazione in pseudocodice** della DCT e della IDCT, seguendo esattamente quanto richiesto.
+
+---
+
+## 🔢 **Formula della DCT (monodimensionale) secondo gli appunti**
+
+Dati un vettore $v \in \mathbb{R}^N$, i coefficienti della DCT sono definiti come:
+
+$$
+a_k = \frac{v \cdot w_k}{w_k \cdot w_k}
+= \frac{\sum_{i=0}^{N-1} v_i \cdot \cos\left( \frac{k\pi(2i + 1)}{2N} \right)}{N} \quad \text{se } k = 0
+$$
+
+$$
+a_k = \frac{\sum_{i=0}^{N-1} v_i \cdot \cos\left( \frac{k\pi(2i + 1)}{2N} \right)}{N/2} \quad \text{se } k \ne 0
+$$
+
+dove $w_k \cdot w_k = N$ per $k=0$, e $N/2$ altrimenti.
+
+---
+
+## 🔁 **Formula della IDCT (monodimensionale)**
+
+Per ottenere $v$ dai coefficienti $a_k$, si usa:
+
+$$
+v_j = \sum_{k=0}^{N-1} a_k \cdot \cos\left( \frac{k\pi(2j + 1)}{2N} \right)
+$$
+
+Non serve alcuna normalizzazione perché i coefficienti $a_k$ erano già stati normalizzati nella DCT.
+
+---
+
+## 📜 **Pseudocodice DCT (1D)**
+
+```plaintext
+function DCT(v: array of float, N: int) -> array of float:
+    let a = array of float of size N
+
+    for k from 0 to N-1:
+        denom = N if k == 0 else N / 2
+        sum = 0
+        for i from 0 to N-1:
+            sum += v[i] * cos((k * π * (2*i + 1)) / (2 * N))
+        a[k] = sum / denom
+
+    return a
+```
+
+---
+
+## 📜 **Pseudocodice IDCT (1D)**
+
+```plaintext
+function IDCT(a: array of float, N: int) -> array of float:
+    let v = array of float of size N
+
+    for j from 0 to N-1:
+        sum = 0
+        for k from 0 to N-1:
+            sum += a[k] * cos((k * π * (2*j + 1)) / (2 * N))
+        v[j] = sum
+
+    return v
+```
+
+---
+
+Se vuoi, posso ora aiutarti con:
+
+* la **versione DCT2** (applicando DCT alle righe e poi alle colonne),
+* e poi con la **versione in C++**, partendo da queste formule.
+
+Ti interessa proseguire con la DCT2 fatta in casa in pseudocodice o direttamente il codice C++?

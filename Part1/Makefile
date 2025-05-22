@@ -8,7 +8,7 @@ SRC = main.cpp linear_resolver.hpp lr_utils.hpp
 TARGET = programma.o
 
 # Directory di Eigen
-EIGEN_DIR = ./eigen-3.4.0
+EIGEN_DIR = ../eigen-3.4.0
 
 # Opzioni di compilazione
 CXXFLAGS = -I$(EIGEN_DIR) -std=c++17 -Wall -O3

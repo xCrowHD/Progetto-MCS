@@ -197,4 +197,4 @@ private:
    
 };
 
-#endif // JACOBI_ITER_RES
+#endif

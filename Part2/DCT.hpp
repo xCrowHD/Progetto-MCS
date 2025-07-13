@@ -1,20 +1,26 @@
+#ifndef DCT_c
+#define DCT_c
+
 #include<iostream>
 #include<chrono>
 #include<math.h>
 #include<Eigen/Dense>
-#include <cmath>
+#include<cmath>
 
 class DCT
 {
     
-private:
+public:
     /* data */
+    double time;
+    
 public:
     DCT() = default;
     ~DCT() = default;
 
     Eigen::VectorXd run_DCT(const Eigen::VectorXd& v)
     {
+        auto start = std::chrono::high_resolution_clock::now();
         const int n = v.size();
 
         Eigen::VectorXd a(n);
@@ -32,9 +38,36 @@ public:
 
             a(k) = sum * d;
         }
-        
+        auto end = std::chrono::high_resolution_clock::now();
+        time = (end - start).count();
         return a;
     }
 
+    Eigen::MatrixXd run_DCT2(const Eigen::MatrixXd& mat)
+    {
+        auto start = std::chrono::high_resolution_clock::now();
+        int n = mat.rows(); // assume quadrato n x n
+        Eigen::MatrixXd tmp(n, n);
+        Eigen::MatrixXd res(n, n);
+
+        // DCT sulle righe
+        for(int r = 0; r < n; ++r)
+        {
+            tmp.row(r) = run_DCT(mat.row(r).transpose()).transpose();
+        }
+        
+        // DCT sulle colonne
+        for(int c = 0; c < n; ++c)
+        {
+            res.col(c) = run_DCT(tmp.col(c));
+        }
+        auto end = std::chrono::high_resolution_clock::now();
+        time = (end - start).count();
+        return res;
+    }
+
+    
     
 };
+
+#endif

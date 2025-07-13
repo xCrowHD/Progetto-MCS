@@ -1,16 +1,15 @@
 #include<iostream>
-#include<Eigen/Dense>
-#include"DCT.hpp"
+#include"DCT_basic_test.hpp"
 
 int main(int argc, char const *argv[])
 {
-    Eigen::VectorXd test_vector(8);
-    test_vector << 231, 32, 233, 161, 24, 71, 140, 245;
+    std::cout.setf(std::ios::scientific);
+    std::cout.precision(2);
 
-    DCT dct;
-    Eigen::VectorXd a = dct.run_DCT(test_vector);
-    std::cout << a.transpose() << std::endl;
-
-
+    dct_basic_test test;
+    test.test_vector(test.vector);
+    test.test_matrix(test.matrix);
+    
+    
     return 0;
 }

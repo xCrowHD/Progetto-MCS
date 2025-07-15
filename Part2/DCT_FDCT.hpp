@@ -47,7 +47,8 @@ public:
 
         // Ordino per dimensione file crescente
         std::sort(csv_files.begin(), csv_files.end(),
-            [](const std::string& a, const std::string& b) {
+            [](const std::string& a, const std::string& b) 
+            {
                 return fs::file_size(a) < fs::file_size(b);
             }
         );

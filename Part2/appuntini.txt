@@ -72,3 +72,52 @@ Se vuoi, posso ora aiutarti con:
 * e poi con la **versione in C++**, partendo da queste formule.
 
 Ti interessa proseguire con la DCT2 fatta in casa in pseudocodice o direttamente il codice C++?
+
+
+per tinyfiledialogs
+
+❗ Requisiti (Linux):
+
+Se su Linux non ti appare il dialogo, assicurati di avere:
+
+    zenity, kdialog, Xdialog o python3-tk installati
+
+Puoi installarli ad esempio con:
+
+sudo apt install zenity
+
+Nota su utilizzo di zenity e variabili d’ambiente in C++ su Ubuntu
+
+    zenity è un tool da terminale per creare finestre di dialogo GUI molto semplici.
+
+    Quando si esegue un programma C++ da VSCode o IDE su Ubuntu, la shell potrebbe non avere tutte le variabili d’ambiente configurate come in un terminale normale.
+
+    In particolare, la variabile DISPLAY (necessaria per mostrare finestre GUI su X11) deve essere correttamente esportata.
+
+    Se si esegue il programma da terminale Ubuntu normale, zenity funziona correttamente perché l’ambiente è configurato correttamente (con DISPLAY, PATH ecc).
+
+    Da VSCode, può servire esportare manualmente DISPLAY=:0 o lanciare VSCode da terminale con l’ambiente giusto.
+
+    Per eseguire zenity da C++ (es. con system("zenity ...")), bisogna assicurarsi che l’ambiente di esecuzione abbia accesso a DISPLAY e alle librerie grafiche.
+
+    Errori come symbol lookup error: ... libpthread.so.0: undefined symbol: __libc_pthread_init possono essere causati da conflitti di librerie, spesso se si usa snap o ambienti isolati che non trovano le librerie corrette.
+
+
+
+    Spiegazione dettagliata (utile per la relazione) (OpenCV DCT e IDCT supportano solo F pari):
+
+    Crop bordi: per semplicità, scartiamo gli eventuali bordi dell’immagine che non rientrano in un blocco completo di dimensione f x f.
+
+    Suddivisione in blocchi: suddividiamo l’immagine in finestrelle quadrate di lato f.
+
+    DCT2: applicata separatamente su ogni blocco (trasformazione discreta coseno 2D).
+
+    Soglia d: si azzerano tutti i coefficienti DCT per cui la somma degli indici (riga + colonna) supera la soglia d, eliminando le frequenze più alte.
+
+    IDCT2: trasformazione inversa per ottenere il blocco modificato in dominio spaziale.
+
+    Clamping: assicuriamo che i valori risultanti siano validi per un’immagine grayscale (0–255).
+
+    Ricostruzione immagine: i blocchi modificati vengono rimessi insieme per formare l’immagine finale.
+
+    Visualizzazione: affianchiamo immagine originale e modificata per confronto.

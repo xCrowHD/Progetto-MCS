@@ -3,7 +3,7 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}",
+                "${workspaceFolder}/**",
                 "${workspaceFolder}/eigen-3.4.0",
                 "${workspaceFolder}/..",
                 "/usr/include/opencv4",

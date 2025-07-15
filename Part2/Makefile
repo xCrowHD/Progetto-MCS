@@ -1,83 +1,56 @@
-# Compilatore
-CXX = g++
-CXXSTD = c++17
+# -------------------
+#  Impostazioni
+# -------------------
+CXX       := g++
+CXXSTD    := c++17
+TARGET    := programma
 
-# Eseguibile e sorgenti
-TARGET = programma.o
-SRC = main.cpp DCT.hpp
+# Sorgenti progetto
+SRC := main.cpp DCT.hpp DCT_FDCT.hpp DCT_basic_test.hpp
 
-# Percorsi librerie
-EIGEN_DIR = ../eigen-3.4.0
-MATPLOTLIBCPP_DIR = ../
+# Eigen
+EIGEN_DIR := ../eigen-3.4.0
 
-# Flag di compilazione comuni
-CXXFLAGS = -std=$(CXXSTD) -Wall -O3 -I$(EIGEN_DIR) -I$(MATPLOTLIBCPP_DIR)
+# Tabulate (single header in ../)
+TABULATE_HEADER := ../tabulate.hpp
 
-# ===== Python config (per matplotlib-cpp) =====
-PYTHON_INCLUDE := $(shell python3 -c "from sysconfig import get_paths as gp; print(gp()['include'])")
-PYTHON_LIB := $(shell python3-config --ldflags)
+# OpenCV
+OPENCV_CXXFLAGS := $(shell pkg-config --cflags opencv4)
+OPENCV_LIBS     := $(shell pkg-config --libs opencv4)
 
-CXXFLAGS += -I$(PYTHON_INCLUDE)
-LDFLAGS += $(PYTHON_LIB)
+# Flags compilazione
+CXXFLAGS := -std=$(CXXSTD) -Wall -O3 \
+            -I$(EIGEN_DIR) \
+            -I.. \
+            $(OPENCV_CXXFLAGS)
 
-# ===== OpenCV config =====
-OPENCV_CFLAGS := $(shell pkg-config --cflags opencv4 2>/dev/null)
-OPENCV_LIBS := $(shell pkg-config --libs opencv4 2>/dev/null)
+LIBS := $(OPENCV_LIBS) -lpthread -lz
 
-# Phony targets
-.PHONY: all build run clean check_all check_eigen check_opencv check_python check_matplotlib_cpp
+# -------------------
+#  Phony targets
+# -------------------
+.PHONY: all check build run clean
 
-# Target di default
-all: check_all build
+all: check build
 
-# Controllo completo
-check_all: check_eigen check_opencv check_python check_matplotlib_cpp
+check:
+	@echo "🔍 Controllo dipendenze..."
+	@test -d "$(EIGEN_DIR)" || (echo "❌ Eigen non trovato in $(EIGEN_DIR)"; exit 1)
+	@test -f "$(TABULATE_HEADER)" || (echo "❌ tabulate.hpp non trovato in ../"; exit 1)
+	@pkg-config --exists opencv4 || (echo "❌ OpenCV non trovato"; exit 1)
+	@echo "✅ Tutto ok."
 
-# Controllo Eigen (header-only)
-check_eigen:
-	@if [ ! -d "$(EIGEN_DIR)" ]; then \
-		echo "❌ Directory Eigen NON trovata in $(EIGEN_DIR)."; \
-		echo "   Scaricala da: https://gitlab.com/libeigen/eigen/-/releases"; \
-		exit 1; \
-	else \
-		echo "✅ Eigen trovato"; \
-	fi
+# -------------------
+#  Compilazione finale
+# -------------------
+build:
+#@echo "🛠 Compilo con:"
+#@echo "   CXXFLAGS   = $(CXXFLAGS)"
+	$(CXX) $(CXXFLAGS) $(SRC) -o $(TARGET) $(LIBS)
 
-# Controllo OpenCV
-check_opencv:
-	@if [ -z "$(OPENCV_CFLAGS)" ]; then \
-		echo "❌ OpenCV NON trovato tramite pkg-config."; \
-		echo "   Installa con: sudo apt install libopencv-dev"; \
-		exit 1; \
-	else \
-		echo "✅ OpenCV trovato"; \
-	fi
-
-# Controllo Python + matplotlib
-check_python:
-	@command -v python3 >/dev/null 2>&1 || (echo "❌ Python3 non trovato. Installa con: sudo apt install python3-dev" && exit 1)
-	@python3 -c "import matplotlib" 2>/dev/null || (echo "❌ matplotlib non trovato. Installa con: pip3 install matplotlib" && exit 1)
-	@echo "✅ Python3 e matplotlib trovati"
-
-# Controllo matplotlib-cpp header
-check_matplotlib_cpp:
-	@if [ ! -f "$(MATPLOTLIBCPP_DIR)/matplotlibcpp.h" ]; then \
-		echo "❌ matplotlibcpp.h non trovato in $(MATPLOTLIBCPP_DIR)"; \
-		exit 1; \
-	else \
-		echo "✅ matplotlib-cpp header trovato"; \
-	fi
-
-# Compilazione
-build: $(SRC)
-	$(CXX) $(CXXFLAGS) $(OPENCV_CFLAGS) $(SRC) -o $(TARGET) $(LDFLAGS) $(OPENCV_LIBS)
-	@echo "✅ Compilazione completata: $(TARGET)"
-
-# Esecuzione
 run: build
 	./$(TARGET)
 
-# Pulizia
 clean:
-	rm -f $(TARGET)
-	@echo "🧹 Pulizia completata"
+	-rm -f $(TARGET)
+	@echo "🧹 Pulizia completata."

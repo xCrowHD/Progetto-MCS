@@ -5,7 +5,7 @@
 #include"DCT.hpp"
 #include<iostream>
 
-class dct_basic_test
+class DCTBasicTest
 {
 
 public:
@@ -14,7 +14,7 @@ public:
 
 public:
 
-    dct_basic_test(): vector(8), matrix(8, 8)
+    DCTBasicTest(): vector(8), matrix(8, 8)
     {
 
         vector << 231, 32, 233, 161, 24, 71, 140, 245;
@@ -29,23 +29,27 @@ public:
           87, 149,  57, 192,  65, 129, 178, 228;
     }
 
-    ~dct_basic_test() = default;
+    ~DCTBasicTest() = default;
 
     void test_vector(const Eigen::VectorXd& v)
     {
+        //std::cout.setf(std::ios::scientific);
+        //std::cout.precision(2);
         DCT dct;
         Eigen::VectorXd a = dct.run_DCT(v);
         std::cout << "DCT1 del vettore:\n" << a.transpose() << std::endl; //Possibili differenze date da come viene calcolato il seno se ben minime
-        std::cout << "In tempo:\n" << dct.time << std::endl;
+        //std::cout << "In tempo:\n" << dct.time << std::endl;
     }
 
 
     void test_matrix(const Eigen::MatrixXd& m)
     {
+        //std::cout.setf(std::ios::scientific);
+        //std::cout.precision(2);   
         DCT dct;
         Eigen::MatrixXd matrix_dct = dct.run_DCT2(m);
         std::cout << "DCT2 della matrice:\n" << matrix_dct << '\n'; //Possibili differenze date da come viene calcolato il seno se ben minime
-        std::cout << "In tempo:\n" << dct.time << std::endl;
+        //std::cout << "In tempo:\n" << dct.time << std::endl;
     }
 
 };

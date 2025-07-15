@@ -1,23 +1,22 @@
 {
     "configurations": [
-      {
-        "name": "Linux",
-        "includePath": [
-          "${workspaceFolder}",                      // la tua cartella Part2
-          "${workspaceFolder}/eigen-3.4.0",       // Eigen (header-only)
-          "${workspaceFolder}/..",                   // matplotlibcpp.h
-          "/usr/include/opencv4",                    // OpenCV
-          "/usr/include/python3.10",                 // Python.h (controlla versione!)
-          "/usr/include",                            // fallback generale
-          "/usr/local/include"                       // in caso di installazioni locali
-        ],
-        "defines": [],
-        "compilerPath": "/usr/bin/g++",
-        "cStandard": "c17",
-        "cppStandard": "gnu++17",
-        "intelliSenseMode": "linux-gcc-x64"
-      }
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}",
+                "${workspaceFolder}/eigen-3.4.0",
+                "${workspaceFolder}/..",
+                "/usr/include/opencv4",
+                "/usr/include/python3.10",
+                "/usr/include",
+                "/usr/local/include"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/g++",
+            "cStandard": "c17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
     ],
     "version": 4
-  }
-  
+}

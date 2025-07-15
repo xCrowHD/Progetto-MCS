@@ -1,0 +1,29 @@
+{
+    "results": [
+        {
+            "homemade_time": 0.269117,
+            "label": "16x16",
+            "opencv_time": 0.039575
+        },
+        {
+            "homemade_time": 1.885684,
+            "label": "32x32",
+            "opencv_time": 0.026021
+        },
+        {
+            "homemade_time": 18.91804,
+            "label": "64x64",
+            "opencv_time": 0.176794
+        },
+        {
+            "homemade_time": 135.665879,
+            "label": "128x128",
+            "opencv_time": 0.419444
+        },
+        {
+            "homemade_time": 980.690993,
+            "label": "256x256",
+            "opencv_time": 1.863422
+        }
+    ]
+}

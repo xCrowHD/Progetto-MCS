@@ -20,7 +20,7 @@ public:
 
     Eigen::VectorXd run_DCT(const Eigen::VectorXd& v)
     {
-        auto start = std::chrono::high_resolution_clock::now();
+        ///auto start = std::chrono::high_resolution_clock::now();
         const int n = v.size();
 
         Eigen::VectorXd a(n);
@@ -38,8 +38,9 @@ public:
 
             a(k) = sum * d;
         }
-        auto end = std::chrono::high_resolution_clock::now();
-        time = (end - start).count();
+        //auto end = std::chrono::high_resolution_clock::now();
+        //std::chrono::duration<double, std::milli> elapsed = end - start;
+        //time = elapsed.count();
         return a;
     }
 
@@ -62,7 +63,8 @@ public:
             res.col(c) = run_DCT(tmp.col(c));
         }
         auto end = std::chrono::high_resolution_clock::now();
-        time = (end - start).count();
+        std::chrono::duration<double, std::milli> elapsed = end - start;
+        time = elapsed.count();
         return res;
     }
 

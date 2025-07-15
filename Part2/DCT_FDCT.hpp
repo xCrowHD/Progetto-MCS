@@ -67,16 +67,16 @@ public:
         }
     
         // Scrivi su file JSON
-        std::ofstream file("./data/results.json");
+        std::ofstream file("./dct-fdct-plots/results.json");
         if(!file) {
-            std::cerr << "Errore nell'aprire ./data/results.json per scrittura\n";
+            std::cerr << "Errore nell'aprire ./dct-fdct-plots/results.json per scrittura\n";
             return;
         }
         file << j.dump(4);
         file.close();
     
         // Lancia lo script Python in background
-        int ret = system("python3 data/dct_fdct_plot.py &");
+        int ret = system("python3 dct-fdct-plots/dct_fdct_plot.py ./dct-fdct-plots/results.json &");
         if(ret != 0) {
             std::cerr << "Errore nell'esecuzione dello script python, codice: " << ret << "\n";
         }

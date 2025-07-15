@@ -3,7 +3,7 @@
 # -------------------
 CXX       := g++
 CXXSTD    := c++17
-TARGET    := programma
+TARGET    := programma.o
 
 # Sorgenti progetto
 SRC := main.cpp DCT.hpp DCT_FDCT.hpp DCT_basic_test.hpp

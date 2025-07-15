@@ -6,6 +6,7 @@
 #include <tuple>
 #include <vector>
 #include <string>
+#include <filesystem>
 #include <Eigen/Dense>
 #include <opencv2/core.hpp>
 #include"DCT.hpp"
@@ -13,6 +14,7 @@
 #include <cstdlib>
 
 using json = nlohmann::json;
+namespace fs = std::filesystem;
 
 class DCTFDCT
 {
@@ -25,44 +27,63 @@ public:
 
     void test_matrix()
     {
-        int count = 5;
-
-        std::string matrix[] {"./matrix/matrice_16x16.csv", "./matrix/matrice_32x32.csv",
-             "./matrix/matrice_64x64.csv", "./matrix/matrice_128x128.csv", "./matrix/matrice_256x256.csv"};
-        
         json j;
         j["results"] = json::array();
+    
+        std::string directory = "./matrix";
+        std::vector<std::string> csv_files;
+    
+        // Scansione directory per file .csv
+        for (const auto& entry : fs::directory_iterator(directory)) {
+            if (entry.is_regular_file() && entry.path().extension() == ".csv") {
+                csv_files.push_back(entry.path().string());
+            }
+        }
+    
+        if(csv_files.empty()) {
+            std::cerr << "Nessun file .csv trovato in " << directory << std::endl;
+            return;
+        }
 
-        for (int i = 0; i < count; i++)
-        {
-            std::tuple<std::string, double, double> result = dtc_fdct(matrix[i]);
+        // Ordino per dimensione file crescente
+        std::sort(csv_files.begin(), csv_files.end(),
+            [](const std::string& a, const std::string& b) {
+                return fs::file_size(a) < fs::file_size(b);
+            }
+        );
+    
+        // Per ogni file csv trovato, esegui dtc_fdct e raccogli risultati
+        for (const auto& file_path : csv_files) {
+            std::tuple<std::string, double, double> result = dtc_fdct(file_path);
             std::string label = std::get<0>(result);
             double hm_time = std::get<1>(result);
             double cv_time = std::get<2>(result);
-
-
+    
             j["results"].push_back({
                 {"label", label},
                 {"homemade_time", hm_time},
                 {"opencv_time", cv_time}
             });
-
         }
-        
-        // Scrivo su file JSON
+    
+        // Scrivi su file JSON
         std::ofstream file("./data/results.json");
-        file << j.dump(4);  // indentazione 4 spazi
+        if(!file) {
+            std::cerr << "Errore nell'aprire ./data/results.json per scrittura\n";
+            return;
+        }
+        file << j.dump(4);
         file.close();
+    
+        // Lancia lo script Python in background
         int ret = system("python3 data/dct_fdct_plot.py &");
         if(ret != 0) {
             std::cerr << "Errore nell'esecuzione dello script python, codice: " << ret << "\n";
         }
-        std::cout << "test" << std::endl;
-        // std::cout << label << std::endl;
-        // std::cout << "Homemade DCT time: " << hm_time << std::endl;
-        // std::cout << "OpenCV DCT time: " << cv_time << std::endl;
-        
+    
+        std::cout << "Test completato.\n";
     }
+    
 
     std::tuple<std::string, double, double> dtc_fdct(const std::string& matrix_csv_name)
     {

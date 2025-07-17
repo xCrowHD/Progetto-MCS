@@ -20,6 +20,8 @@ std::map<std::string, std::vector<int>> metodo_min_count{
     {"Gradiente", std::vector<int>(5, 0)},
     {"Gradiente Coniugato", std::vector<int>(5, 0)}};
 
+std::vector<double> tols = {1e-4, 1e-6, 1e-8, 1e-10};
+
 template <typename MatrixType>
 class lr_test
 {
@@ -28,12 +30,13 @@ public:
     lr_test() = default;
     ~lr_test() = default;
 
-    void test_lr()
+
+    void test_lr_data_matrix()
     {
 
         std::string directory = "./dati";
         std::vector<std::string> mtx_files;
-        std::vector<double> tols = {1e-4, 1e-6, 1e-8, 1e-10};
+
         // Scansione directory per file .mtx
         for (const auto &entry : fs::directory_iterator(directory))
         {
@@ -64,63 +67,68 @@ public:
 
             for (const auto &t : tols)
             {
-                // TITLE
-                Table title;
-                title.format().font_align(FontAlign::center);
-                std::ostringstream oss;
-                size_t rows = matrix.rows();
-                size_t cols = matrix.cols();
-                size_t nnz = 0;
-                if constexpr (std::is_same<MatrixType, Eigen::SparseMatrix<double>>::value)
-                {
-                    nnz = matrix.nonZeros();
-                }
-
-                std::string matrix_type = std::is_same<MatrixType, Eigen::MatrixXd>::value ? "Densa" : "Sparsa";
-                oss << matrix_name << " (" << matrix_type << ", "
-                    << rows << "x" << cols;
-                if (nnz > 0)
-                    oss << ", NNZ = " << nnz;
-                oss << ", tol = " << std::scientific << std::setprecision(1) << t << ")";
-                title.add_row(Row_t{oss.str()}); // title
-
-                // CONTENT
-                Table table;
-                table.format().border_color(Color::red);
-
-                std::string nome_metodo = "Nome Metodo";
-                std::string n_iter = "Numero iterazioni";
-                std::string res_rel = "Residuo relativo ||b - Ax|| / ||b||";
-                std::string err_rel = "Errore relativo ||x - x_exact|| / ||x_exact||";
-                std::string err_ass = "Errore assoluto ||x - x_exact||";
-                std::string time = "Tempo in secondi";
-
-                table.add_row({nome_metodo, n_iter, res_rel, err_rel, err_ass, time});
-                linear_resolver<MatrixType> lr(matrix, t);
-
-                std::tuple<Eigen::VectorXd, int, double, double, double, double> jac_result = lr.jacobi_resolver(lr.getA(), lr.getb());
-                add_to_table(table, jac_result, std::string("Jacobi"));
-
-                std::tuple<Eigen::VectorXd, int, double, double, double, double> gas_result = lr.gauss_resolver(lr.getA(), lr.getb());
-                add_to_table(table, gas_result, std::string("Gauss"));
-
-                std::tuple<Eigen::VectorXd, int, double, double, double, double> grad_result = lr.gradient_resolver(lr.getA(), lr.getb());
-                add_to_table(table, grad_result, std::string("Gradiente"));
-
-                std::tuple<Eigen::VectorXd, int, double, double, double, double> cgrad_result = lr.conjugate_gradient_resolver(lr.getA(), lr.getb());
-                add_to_table(table, cgrad_result, std::string("Gradiente Coniugato"));
-
-                title.format().font_color(Color::cyan).font_style({FontStyle::bold});
-                table[0].format().font_color(Color::yellow).font_style({FontStyle::italic});
-
-                color_min_values_per_column(table);
-
-                std::cout << title << "\n";
-                std::cout << table << "\n\n";
+                create_tables(matrix, t, matrix_name);
             }
         }
 
         stats_table();
+    }
+
+    void create_tables(const MatrixType &matrix, const double &t, const std::string &matrix_name)
+    {
+        // TITLE
+        Table title;
+        title.format().font_align(FontAlign::center);
+        std::ostringstream oss;
+        size_t rows = matrix.rows();
+        size_t cols = matrix.cols();
+        size_t nnz = 0;
+        if constexpr (std::is_same<MatrixType, Eigen::SparseMatrix<double>>::value)
+        {
+            nnz = matrix.nonZeros();
+        }
+
+        std::string matrix_type = std::is_same<MatrixType, Eigen::MatrixXd>::value ? "Densa" : "Sparsa";
+        oss << matrix_name << " (" << matrix_type << ", "
+            << rows << "x" << cols;
+        if (nnz > 0)
+            oss << ", NNZ = " << nnz;
+        oss << ", tol = " << std::scientific << std::setprecision(1) << t << ")";
+        title.add_row(Row_t{oss.str()}); // title
+
+        // CONTENT
+        Table table;
+        table.format().border_color(Color::red);
+
+        std::string nome_metodo = "Nome Metodo";
+        std::string n_iter = "Numero iterazioni";
+        std::string res_rel = "Residuo relativo ||b - Ax|| / ||b||";
+        std::string err_rel = "Errore relativo ||x - x_exact|| / ||x_exact||";
+        std::string err_ass = "Errore assoluto ||x - x_exact||";
+        std::string time = "Tempo in secondi";
+
+        table.add_row({nome_metodo, n_iter, res_rel, err_rel, err_ass, time});
+        linear_resolver<MatrixType> lr(matrix, t);
+
+        std::tuple<Eigen::VectorXd, int, double, double, double, double> jac_result = lr.jacobi_resolver(lr.getA(), lr.getb());
+        add_to_table(table, jac_result, std::string("Jacobi"));
+
+        std::tuple<Eigen::VectorXd, int, double, double, double, double> gas_result = lr.gauss_resolver(lr.getA(), lr.getb());
+        add_to_table(table, gas_result, std::string("Gauss"));
+
+        std::tuple<Eigen::VectorXd, int, double, double, double, double> grad_result = lr.gradient_resolver(lr.getA(), lr.getb());
+        add_to_table(table, grad_result, std::string("Gradiente"));
+
+        std::tuple<Eigen::VectorXd, int, double, double, double, double> cgrad_result = lr.conjugate_gradient_resolver(lr.getA(), lr.getb());
+        add_to_table(table, cgrad_result, std::string("Gradiente Coniugato"));
+
+        title.format().font_color(Color::cyan).font_style({FontStyle::bold});
+        table[0].format().font_color(Color::yellow).font_style({FontStyle::italic});
+
+        color_min_values_per_column(table);
+
+        std::cout << title << "\n";
+        std::cout << table << "\n\n";
     }
 
 private:

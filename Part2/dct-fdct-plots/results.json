@@ -1,29 +1,29 @@
 {
     "results": [
         {
-            "homemade_time": 0.286648,
+            "homemade_time": 0.296448,
             "label": "16x16",
-            "opencv_time": 0.040362
+            "opencv_time": 0.050076
         },
         {
-            "homemade_time": 1.984715,
+            "homemade_time": 2.337648,
             "label": "32x32",
-            "opencv_time": 0.036904
+            "opencv_time": 0.029746
         },
         {
-            "homemade_time": 19.435537,
+            "homemade_time": 17.916737,
             "label": "64x64",
-            "opencv_time": 0.179249
+            "opencv_time": 0.101319
         },
         {
-            "homemade_time": 140.281412,
+            "homemade_time": 127.304755,
             "label": "128x128",
-            "opencv_time": 0.422675
+            "opencv_time": 0.422044
         },
         {
-            "homemade_time": 1034.144569,
+            "homemade_time": 981.266084,
             "label": "256x256",
-            "opencv_time": 1.774864
+            "opencv_time": 1.753544
         }
     ]
 }

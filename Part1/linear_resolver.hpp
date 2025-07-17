@@ -3,98 +3,87 @@
 
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
-#include<iostream>
+#include <iostream>
 #include <chrono>
-#include"lr_utils.hpp"
+#include "lr_utils.hpp"
+#include <tuple>
 
-template<typename MatrixType>
-class linear_resolver {
-
+template <typename MatrixType>
+class linear_resolver
+{
 private:
     MatrixType _A;
     Eigen::VectorXd _x, _b;
     double _tol;
-
     int maxIter = 20000;
 
 public:
-    linear_resolver(const MatrixType& A, const double& tol)
+    linear_resolver(const MatrixType &A, const double &tol)
     {
         _A = A;
         _tol = tol;
-        //Create vector X
-        int n = _A.rows();  
+        // Create vector X
+        int n = _A.rows();
         _x = Eigen::VectorXd::Ones(n);
-        _b = _A * _x;  // genera b coerente con x
+        _b = _A * _x; // genera b coerente con x
 
-    };    // Costruttore
+    }; // Costruttore
 
-    ~linear_resolver() = default;   // Distruttore
+    ~linear_resolver() = default; // Distruttore
 
-    void run_resolvers()
+    std::tuple<Eigen::VectorXd, int, double, double, double, double> jacobi_resolver(const MatrixType &A, const Eigen::VectorXd &b)
     {
-        std::cout << "\n=== Test JACOBI ===\n";
-        jacobi_resolver(_A, _b);
-        std::cout << "\n=== Test GAUSS ===\n";
-        gauss_resolver(_A, _b);
-        std::cout << "\n=== Test GRADIENT ===\n";
-        gradient_resolver(_A, _b);
-        std::cout << "\n=== Test CONJUGATE GRADIENT ===\n";
-        conjugate_gradient_resolver(_A, _b);
-    }
-
-private:
-    void jacobi_resolver(const MatrixType& A, const Eigen::VectorXd& b)
-    {
-        //Start Timer
+        // Start Timer
         auto start = std::chrono::high_resolution_clock::now();
 
-        //Calcolo D
+        // Calcolo D
         Eigen::VectorXd D = lr_utils::getD(A);
 
-        //Situazione Pre Jacobi
+        // Situazione Pre Jacobi
         Eigen::VectorXd x = Eigen::VectorXd::Zero(b.size());
         Eigen::VectorXd r = b - A * x;
         int n_it = 0;
         Eigen::MatrixXd D_inv = D.cwiseInverse().asDiagonal();
 
-        //Jacobi
-        while(n_it < maxIter && r.norm() / b.norm() > _tol)
+        // Jacobi
+        while (n_it < maxIter && r.norm() / b.norm() > _tol)
         {
             x = x + D_inv * r;
             r = b - A * x;
             n_it++;
         }
 
-        //End Timer
+        // End Timer
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> duration_sec = end - start;
 
-        //std::cout << "Souluzione: " << x << std::endl;
-        std::cout << "Iterazioni: " << n_it << std::endl;
-        std::cout << "Tolleranza: " << r.norm() / b.norm() << std::endl;
-        std::cout << "Tempo in sec: " << duration_sec.count() << std::endl;
-        std::cout << "Errore assoluto: " << (x - _x).norm() << std::endl;
-        std::cout << "Errore relativo: " << (x - _x).norm() / _x.norm() << std::endl;
+        //std::cout << "Soluzione approssimata x:\n"
+          //        << x << std::endl;
+        //std::cout << "Numero iterazioni: " << n_it << std::endl;
+        //std::cout << "Residuo relativo ||b - Ax|| / ||b||: " << r.norm() / b.norm() << std::endl;
+        //std::cout << "Tempo di esecuzione (s): " << duration_sec.count() << std::endl;
+        //std::cout << "Errore assoluto ||x - x_exact||: " << (x - _x).norm() << std::endl;
+        //std::cout << "Errore relativo ||x - x_exact|| / ||x_exact||: " << (x - _x).norm() / _x.norm() << std::endl;
 
-    };
+        return { x, n_it, r.norm() / b.norm(), duration_sec.count(), (x - _x).norm(), (x - _x).norm() / _x.norm() };
+    }
 
-    void gauss_resolver(const MatrixType& A, const Eigen::VectorXd& b)
+    std::tuple<Eigen::VectorXd, int, double, double, double, double> gauss_resolver(const MatrixType &A, const Eigen::VectorXd &b)
     {
-        //Start Timer
+        // Start Timer
         auto start = std::chrono::high_resolution_clock::now();
 
-        //Situazione Pre Gauss
+        // Situazione Pre Gauss
         Eigen::VectorXd x = Eigen::VectorXd::Zero(b.size());
         Eigen::VectorXd r = b - A * x;
         int n_it = 0;
 
-        //Build P
+        // Build P
         MatrixType P = lr_utils::getLowerTriangular(A);
-        //Build first y
+        // Build first y
         Eigen::VectorXd y = lr_utils::forward_substitution(P, r);
 
-        while(n_it < maxIter && r.norm() / b.norm() > _tol)
+        while (n_it < maxIter && r.norm() / b.norm() > _tol)
         {
             x = x + y;
             r = b - A * x;
@@ -102,63 +91,66 @@ private:
             n_it++;
         }
 
-        //End Timer
+        // End Timer
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> duration_sec = end - start;
 
-        //std::cout << "Souluzione: " << x << std::endl;
-        std::cout << "Iterazioni: " << n_it << std::endl;
-        std::cout << "Tolleranza: " << r.norm() / b.norm() << std::endl;
-        std::cout << "Tempo in sec: " << duration_sec.count() << std::endl;
-        std::cout << "Errore assoluto: " << (x - _x).norm() << std::endl;
-        std::cout << "Errore relativo: " << (x - _x).norm() / _x.norm() << std::endl;
+        //std::cout << "Soluzione approssimata x:\n"
+         //         << x << std::endl;
+        //std::cout << "Numero iterazioni: " << n_it << std::endl;
+        //std::cout << "Residuo relativo ||b - Ax|| / ||b||: " << r.norm() / b.norm() << std::endl;
+        //std::cout << "Tempo di esecuzione (s): " << duration_sec.count() << std::endl;
+        //std::cout << "Errore assoluto ||x - x_exact||: " << (x - _x).norm() << std::endl;
+        //std::cout << "Errore relativo ||x - x_exact|| / ||x_exact||: " << (x - _x).norm() / _x.norm() << std::endl;
 
-    };
+        return { x, n_it, r.norm() / b.norm(), duration_sec.count(), (x - _x).norm(), (x - _x).norm() / _x.norm() };
+    }
 
-    void gradient_resolver(const MatrixType& A, const Eigen::VectorXd& b)
+    std::tuple<Eigen::VectorXd, int, double, double, double, double> gradient_resolver(const MatrixType &A, const Eigen::VectorXd &b)
     {
         // Start timer
         auto start = std::chrono::high_resolution_clock::now();
 
         Eigen::VectorXd x = Eigen::VectorXd::Zero(b.size());
-        Eigen::VectorXd r = b - A * x;  // <-- Calcolo iniziale del residuo
+        Eigen::VectorXd r = b - A * x; // <-- Calcolo iniziale del residuo
 
         Eigen::VectorXd y = Eigen::VectorXd::Zero(b.size());
 
         int n_it = 0;
 
-        while(n_it < maxIter && r.norm() / b.norm() > _tol)
+        while (n_it < maxIter && r.norm() / b.norm() > _tol)
         {
             y = A * r;
             double a = r.dot(r);
-            double b_val = r.dot(y);  // non facciamo la trasposta ma direttamente .dot() che è piu veloce e semplice
+            double b_val = r.dot(y); // non facciamo la trasposta ma direttamente .dot() che è piu veloce e semplice
             double alpha = a / b_val;
 
             x = x + alpha * r;
-            r = b - A * x; 
-
+            r = b - A * x;
             n_it++;
         }
 
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> duration_sec = end - start;
 
-        //std::cout << "Souluzione: " << x << std::endl;
-        std::cout << "Iterazioni: " << n_it << std::endl;
-        std::cout << "Tolleranza: " << r.norm() / b.norm() << std::endl;
-        std::cout << "Tempo in sec: " << duration_sec.count() << std::endl;
-        std::cout << "Errore assoluto: " << (x - _x).norm() << std::endl;
-        std::cout << "Errore relativo: " << (x - _x).norm() / _x.norm() << std::endl;
+        //std::cout << "Soluzione approssimata x:\n"
+          //        << x << std::endl;
+        //std::cout << "Numero iterazioni: " << n_it << std::endl;
+        //std::cout << "Residuo relativo ||b - Ax|| / ||b||: " << r.norm() / b.norm() << std::endl;
+        //std::cout << "Tempo di esecuzione (s): " << duration_sec.count() << std::endl;
+        //std::cout << "Errore assoluto ||x - x_exact||: " << (x - _x).norm() << std::endl;
+        //std::cout << "Errore relativo ||x - x_exact|| / ||x_exact||: " << (x - _x).norm() / _x.norm() << std::endl;
 
-    };
+        return { x, n_it, r.norm() / b.norm(), duration_sec.count(), (x - _x).norm(), (x - _x).norm() / _x.norm() };
+    }
 
-    void conjugate_gradient_resolver(const MatrixType& A, const Eigen::VectorXd& b)
+    std::tuple<Eigen::VectorXd, int, double, double, double, double> conjugate_gradient_resolver(const MatrixType &A, const Eigen::VectorXd &b)
     {
         // Start timer
         auto start = std::chrono::high_resolution_clock::now();
 
         Eigen::VectorXd x = Eigen::VectorXd::Zero(b.size());
-        Eigen::VectorXd r = b - A * x;  // <-- Calcolo iniziale del residuo
+        Eigen::VectorXd r = b - A * x; // <-- Calcolo iniziale del residuo
         Eigen::VectorXd d = r;
 
         Eigen::VectorXd y = Eigen::VectorXd::Zero(b.size());
@@ -166,7 +158,7 @@ private:
 
         int n_it = 0;
 
-        while(n_it < maxIter && r.norm() / b.norm() > _tol)
+        while (n_it < maxIter && r.norm() / b.norm() > _tol)
         {
             y = A * d;
             double alpha = r.dot(d) / d.dot(y);
@@ -182,19 +174,26 @@ private:
 
             n_it++;
         }
-        
+
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> duration_sec = end - start;
 
-        //std::cout << "Souluzione: " << x << std::endl;
-        std::cout << "Iterazioni: " << n_it << std::endl;
-        std::cout << "Tolleranza: " << r.norm() / b.norm() << std::endl;
-        std::cout << "Tempo in sec: " << duration_sec.count() << std::endl;
-        std::cout << "Errore assoluto: " << (x - _x).norm() << std::endl;
-        std::cout << "Errore relativo: " << (x - _x).norm() / _x.norm() << std::endl;
+        // std::cout << "Souluzione: " << x << std::endl;
+        //std::cout << "Soluzione approssimata x:\n"
+          //        << x << std::endl;
+        //std::cout << "Numero iterazioni: " << n_it << std::endl;
+        //std::cout << "Residuo relativo ||b - Ax|| / ||b||: " << r.norm() / b.norm() << std::endl;
+        //std::cout << "Tempo di esecuzione (s): " << duration_sec.count() << std::endl;
+        //std::cout << "Errore assoluto ||x - x_exact||: " << (x - _x).norm() << std::endl;
+        //std::cout << "Errore relativo ||x - x_exact|| / ||x_exact||: " << (x - _x).norm() / _x.norm() << std::endl;
 
-    };
-   
+        return { x, n_it, r.norm() / b.norm(), duration_sec.count(), (x - _x).norm(), (x - _x).norm() / _x.norm() };
+    }
+
+    const MatrixType& getA() const { return _A; }
+    const Eigen::VectorXd& getb() const { return _b; }
+
+
 };
 
 #endif

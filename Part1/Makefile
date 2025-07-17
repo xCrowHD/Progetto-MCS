@@ -2,16 +2,14 @@
 CXX = g++
 
 # File sorgenti
-SRC = main.cpp linear_resolver.hpp lr_utils.hpp
+SRC = main.cpp linear_resolver.hpp lr_utils.hpp lr_test.hpp
 
 # Nome dell'eseguibile
 TARGET = programma.o
 
-# Directory di Eigen
-EIGEN_DIR = ../eigen-3.4.0
-
-# Opzioni di compilazione
-CXXFLAGS = -I$(EIGEN_DIR) -std=c++17 -Wall -O3
+CXXFLAGS  = -std=c++17 -Wall -O3             \
+            -I.                              \
+            -I../eigen-3.4.0                 
 
 # Regole Phony
 .PHONY: build clean run all
@@ -26,7 +24,7 @@ build: $(SRC)
 
 # Esecuzione
 run: build
-	./$(TARGET)
+	@./$(TARGET)
 
 # Pulizia
 clean:

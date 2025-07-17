@@ -3,65 +3,57 @@
 #include <Eigen/Sparse>
 #include <unsupported/Eigen/SparseExtra>
 #include "linear_resolver.hpp"
+#include "tabulate.hpp"
+#include "lr_test.hpp"
 
-void _3x3Test()
+using namespace tabulate;
+using Row_t = Table::Row_t;
+
+// Colori ANSI (puoi rimuoverli se non vuoi)
+#define COLOR_RED "\033[1;31m"
+#define COLOR_GREEN "\033[1;32m"
+#define COLOR_YELLOW "\033[1;33m"
+#define COLOR_CYAN "\033[1;36m"
+#define COLOR_RESET "\033[0m"
+
+void show_menu()
 {
-    // Matrice DENSE
-    Eigen::MatrixXd A_dense(3,3);
-    A_dense << 10, -1, 2,
-               -1, 11, -1,
-                2, -1, 10;
-
-    double tol = 1e-6;
-
-    std::cout << "\n=== Test con MATRICE DENSE ===\n";
-    linear_resolver<Eigen::MatrixXd> solver_dense(A_dense, tol);
-    solver_dense.run_resolvers();
-
-    // Matrice SPARSE equivalente
-    Eigen::SparseMatrix<double> A_sparse(3, 3);
-    A_sparse.insert(0, 0) = 10;
-    A_sparse.insert(0, 1) = -1;
-    A_sparse.insert(0, 2) = 2;
-
-    A_sparse.insert(1, 0) = -1;
-    A_sparse.insert(1, 1) = 11;
-    A_sparse.insert(1, 2) = -1;
-
-    A_sparse.insert(2, 0) = 2;
-    A_sparse.insert(2, 1) = -1;
-    A_sparse.insert(2, 2) = 10;
-
-    A_sparse.makeCompressed();
-
-    std::cout << "\n=== Test con MATRICE SPARSA ===\n";
-    linear_resolver<Eigen::SparseMatrix<double>> solver_sparse(A_sparse, tol);
-    solver_sparse.run_resolvers();
+    std::cout << COLOR_CYAN << "\n===== MENU PRINCIPALE =====\n"
+              << COLOR_RESET;
+    std::cout << COLOR_GREEN << "1. Test su matrici .mtx \n";
+    std::cout << "2. Test su matrice a scelta\n";
+    std::cout << "q. Esci\n"
+              << COLOR_RESET;
+    std::cout << COLOR_YELLOW << "Scegli un'opzione: " << COLOR_RESET;
 }
 
-int main() {
-    
-    //_3x3Test();
-
-    Eigen::SparseMatrix<double> spa1_sparse;
-
-    if (!Eigen::loadMarket(spa1_sparse, "./dati/spa1.mtx")) 
+int main()
+{
+    // Modalità interattiva
+    char choice;
+    do
     {
-        std::cerr << "Errore nel caricamento della matrice sparsa." << std::endl;
-    }
+        show_menu();
+        std::cin >> choice;
 
-    Eigen::MatrixXd spa1_dense = Eigen::MatrixXd(spa1_sparse);
+        switch (choice)
+        {
+        case '1':
+            lr_test<Eigen::SparseMatrix<double>> lr_t;
+            lr_t.test_lr();
+            break;
+        case '2':
+            break;
+        case 'q':
+            std::cout << COLOR_GREEN << "Chiusura in corso...\n"
+                      << COLOR_RESET;
+            break;
+        default:
+            std::cout << COLOR_RED << "Scelta non valida. Riprova.\n"
+                      << COLOR_RESET;
+        }
 
-    double tol = 1e-6;
-
-    std::cout << "\n=== Test con MATRICE DENSE ===\n";
-    linear_resolver<Eigen::MatrixXd> dense_solver(spa1_dense, tol);
-    dense_solver.run_resolvers();
-
-    std::cout << "\n=== Test con MATRICE SPARSE ===\n";
-    linear_resolver<Eigen::SparseMatrix<double>> sparse_solver(spa1_sparse, tol);
-    sparse_solver.run_resolvers();   
+    } while (choice != 'q');
 
     return 0;
 }
-

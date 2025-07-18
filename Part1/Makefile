@@ -23,7 +23,7 @@ build: $(SRC)
 	@echo "✅ Compilazione completata: $(TARGET)"
 
 # Esecuzione
-run: build
+run:
 	@./$(TARGET)
 
 # Pulizia

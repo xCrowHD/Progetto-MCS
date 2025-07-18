@@ -57,13 +57,6 @@ public:
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> duration_sec = end - start;
 
-        //std::cout << "Soluzione approssimata x:\n"
-          //        << x << std::endl;
-        //std::cout << "Numero iterazioni: " << n_it << std::endl;
-        //std::cout << "Residuo relativo ||b - Ax|| / ||b||: " << r.norm() / b.norm() << std::endl;
-        //std::cout << "Tempo di esecuzione (s): " << duration_sec.count() << std::endl;
-        //std::cout << "Errore assoluto ||x - x_exact||: " << (x - _x).norm() << std::endl;
-        //std::cout << "Errore relativo ||x - x_exact|| / ||x_exact||: " << (x - _x).norm() / _x.norm() << std::endl;
 
         return { x, n_it, r.norm() / b.norm(), duration_sec.count(), (x - _x).norm(), (x - _x).norm() / _x.norm() };
     }
@@ -95,14 +88,6 @@ public:
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> duration_sec = end - start;
 
-        //std::cout << "Soluzione approssimata x:\n"
-         //         << x << std::endl;
-        //std::cout << "Numero iterazioni: " << n_it << std::endl;
-        //std::cout << "Residuo relativo ||b - Ax|| / ||b||: " << r.norm() / b.norm() << std::endl;
-        //std::cout << "Tempo di esecuzione (s): " << duration_sec.count() << std::endl;
-        //std::cout << "Errore assoluto ||x - x_exact||: " << (x - _x).norm() << std::endl;
-        //std::cout << "Errore relativo ||x - x_exact|| / ||x_exact||: " << (x - _x).norm() / _x.norm() << std::endl;
-
         return { x, n_it, r.norm() / b.norm(), duration_sec.count(), (x - _x).norm(), (x - _x).norm() / _x.norm() };
     }
 
@@ -132,14 +117,6 @@ public:
 
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> duration_sec = end - start;
-
-        //std::cout << "Soluzione approssimata x:\n"
-          //        << x << std::endl;
-        //std::cout << "Numero iterazioni: " << n_it << std::endl;
-        //std::cout << "Residuo relativo ||b - Ax|| / ||b||: " << r.norm() / b.norm() << std::endl;
-        //std::cout << "Tempo di esecuzione (s): " << duration_sec.count() << std::endl;
-        //std::cout << "Errore assoluto ||x - x_exact||: " << (x - _x).norm() << std::endl;
-        //std::cout << "Errore relativo ||x - x_exact|| / ||x_exact||: " << (x - _x).norm() / _x.norm() << std::endl;
 
         return { x, n_it, r.norm() / b.norm(), duration_sec.count(), (x - _x).norm(), (x - _x).norm() / _x.norm() };
     }
@@ -177,15 +154,6 @@ public:
 
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> duration_sec = end - start;
-
-        // std::cout << "Souluzione: " << x << std::endl;
-        //std::cout << "Soluzione approssimata x:\n"
-          //        << x << std::endl;
-        //std::cout << "Numero iterazioni: " << n_it << std::endl;
-        //std::cout << "Residuo relativo ||b - Ax|| / ||b||: " << r.norm() / b.norm() << std::endl;
-        //std::cout << "Tempo di esecuzione (s): " << duration_sec.count() << std::endl;
-        //std::cout << "Errore assoluto ||x - x_exact||: " << (x - _x).norm() << std::endl;
-        //std::cout << "Errore relativo ||x - x_exact|| / ||x_exact||: " << (x - _x).norm() / _x.norm() << std::endl;
 
         return { x, n_it, r.norm() / b.norm(), duration_sec.count(), (x - _x).norm(), (x - _x).norm() / _x.norm() };
     }

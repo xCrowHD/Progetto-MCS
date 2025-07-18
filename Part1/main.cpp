@@ -46,7 +46,7 @@ double ask_tolerance_from_user(const std::string &prompt = "Inserisci la tollera
         }
         else
         {
-            std::cout << "Input non valido. Riprova con un numero positivo in notazione scientifica (es. 1e-4).\n";
+            std::cout << COLOR_RED <<"Input non valido. Riprova con un numero positivo in notazione scientifica (es. 1e-4).\n" << COLOR_RESET;
         }
     }
 }
@@ -62,7 +62,7 @@ bool load_csv_to_dense(const std::string &filename, Eigen::MatrixXd &matrix, con
     std::ifstream file(filename);
     if (!file.is_open())
     {
-        std::cerr << "Impossibile aprire il file: " << filename << std::endl;
+        std::cout << "Impossibile aprire il file: " << COLOR_RED << filename << std::endl << COLOR_RESET;
         return false;
     }
 
@@ -176,7 +176,7 @@ int main()
             }
             else
             {
-                std::cerr << "Formato file non supportato: " << path << "\n";
+                std::cerr << COLOR_RED <<"Formato file non supportato: "  << path << "\n" << COLOR_RESET;
             }
 
             break;

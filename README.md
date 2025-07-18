@@ -237,3 +237,31 @@ la classe `main.cpp` implementa un'interfaccia a terminale interattiva per esegu
   * I risultati sono mostrati in tabelle formattate con la libreria `tabulate.hpp`, evidenziando statistiche come numero di iterazioni, residuo relativo, errori e tempi di esecuzione per ciascun metodo.
 
 ---
+
+# Progetto 2: Compressione di immagini tramite DCT (Parte II)
+
+## 1. Introduzione
+
+Questa seconda parte del progetto riguarda la compressione di immagini tramite la Trasformata Discreta del Coseno bidimensionale (DCT2). Sono state implementate sia una versione "homemade" che una versione basata su libreria (OpenCV), con l'obiettivo di confrontare le prestazioni e sviluppare un software per processare immagini BMP, applicare la DCT2 a blocchi, effettuare il taglio delle frequenze e ricostruire l'immagine compressa.
+
+## 2. Nozioni teoriche: DCT2
+
+La DCT2 permette di rappresentare una matrice (immagine) come somma di funzioni coseno di diverse frequenze. È fondamentale nella compressione JPEG per la sua capacità di concentrare l'energia in pochi coefficienti a bassa frequenza.
+
+La formula della DCT2 per una matrice $A$ di dimensione $N \times N$ è:
+
+$$
+C_{u,v} = \alpha(u)\alpha(v) \sum_{x=0}^{N-1} \sum_{y=0}^{N-1} A_{x,y} \cos\left[\frac{\pi}{N}\left(x+\frac{1}{2}\right)u\right] \cos\left[\frac{\pi}{N}\left(y+\frac{1}{2}\right)v\right]
+$$
+
+dove $\alpha(0) = \sqrt{1/N}$, $\alpha(k) = \sqrt{2/N}$ per $k > 0$.
+
+## 3. Struttura del codice (Part2)
+
+- `DCT.hpp`: Implementazione della DCT1D e DCT2D "homemade".
+- `DCT_FDCT.hpp`: Confronto tra DCT "homemade" e OpenCV, generazione risultati e grafici.
+- `BMP_FDCT.hpp`: Gestione immagini BMP e compressione JPEG-like.
+- `main.cpp`: Interfaccia utente e orchestrazione.
+- `dct-fdct-plots/`: Script Python per grafici e file JSON con risultati.
+- `immagini/original/`: Immagini BMP di test.
+

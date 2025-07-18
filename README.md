@@ -165,10 +165,6 @@ Questo namespace raccoglie una serie di funzioni di utilità per supportare l’
 
 ---
 
-Ecco la sezione aggiornata del README con la descrizione della classe `lr_test` basata sul codice che mi hai mandato. Puoi inserirla nel documento:
-
----
-
 ### 4.3 Classe `lr_test`
 
 Classe template `lr_test<MatrixType>` che si occupa di testare i metodi iterativi implementati in `linear_resolver` su matrici caricate da file. Supporta sia matrici dense (`Eigen::MatrixXd`) che sparse (`Eigen::SparseMatrix<double>`).
@@ -207,10 +203,6 @@ Classe template `lr_test<MatrixType>` che si occupa di testare i metodi iterativ
 * Usa la libreria `Eigen` per manipolare matrici sparse e dense.
 * Implementa metodi per estrarre i dati dai risultati e formattarli per la visualizzazione.
 * La gestione del colore e dello stile è gestita tramite `tabulate`.
-
----
-
-Certo! Ecco un paragrafo dedicato alla classe `main` da inserire nel README:
 
 ---
 
